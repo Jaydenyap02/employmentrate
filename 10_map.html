@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuala Lumpur Unemployment Rate (2011 - 2020)</title>
+    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+</head>
+<body>
+
+<h1>Kuala Lumpur Unemployment Rate (2011 - 2020)</h1>
+<div id="vis"></div>
+
+<script type="text/javascript">
+    const spec = {
+        "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+        "title": "Kuala Lumpur Unemployment Rate (2011 - 2020)",
+        "width": 200,
+        "height": 200,
+        "projection": {"type": "mercator"},
+        "data": {
+            "url": "https://raw.githubusercontent.com/Jaydenyap02/employmentrate/refs/heads/main/my_map.json",
+            "format": {"type": "topojson", "feature": "my2"}
+        },
+        "transform": [
+            {
+                "filter": "datum.properties.name === 'Kuala Lumpur'"
+            },
+            {
+                "lookup": "properties.name",
+                "from": {
+                    "data": {
+                        "url": "https://raw.githubusercontent.com/Jaydenyap02/employmentrate/refs/heads/main/MY_full_unemployment.csv",
+                        "format": {"type": "csv"}
+                    },
+                    "key": "State/Country",
+                    "fields": ["2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020"]
+                }
+            }
+        ],
+        "vconcat": [
+            {
+                "repeat": {
+                    "column": ["2011", "2012", "2013", "2014", "2015"]
+                },
+                "spec": {
+                    "mark": {
+                        "type": "geoshape",
+                        "stroke": "black",
+                        "strokeWidth": 0.5
+                    },
+                    "encoding": {
+                        "color": {
+                            "field": {"repeat": "column"},
+                            "type": "quantitative",
+                            "scale": {"scheme": "reds"},
+                            "title": "Unemployment Rate (%)"
+                        },
+                        "tooltip": [
+                            {"field": "properties.name", "type": "nominal", "title": "State"},
+                            {"field": {"repeat": "column"}, "type": "quantitative", "title": "Unemployment Rate (%)"}
+                        ]
+                    }
+                }
+            },
+            {
+                "repeat": {
+                    "column": ["2016", "2017", "2018", "2019", "2020"]
+                },
+                "spec": {
+                    "mark": {
+                        "type": "geoshape",
+                        "stroke": "black",
+                        "strokeWidth": 0.5
+                    },
+                    "encoding": {
+                        "color": {
+                            "field": {"repeat": "column"},
+                            "type": "quantitative",
+                            "scale": {"scheme": "reds"},
+                            "title": "Unemployment Rate (%)"
+                        },
+                        "tooltip": [
+                            {"field": "properties.name", "type": "nominal", "title": "State"},
+                            {"field": {"repeat": "column"}, "type": "quantitative", "title": "Unemployment Rate (%)"}
+                        ]
+                    }
+                }
+            }
+        ]
+    };
+
+    vegaEmbed('#vis', spec).catch(console.warn);
+</script>
+
+</body>
+</html>
